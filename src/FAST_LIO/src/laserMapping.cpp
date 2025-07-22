@@ -94,7 +94,6 @@ int    iterCount = 0, feats_down_size = 0, NUM_MAX_ITERATIONS = 0, laserCloudVal
 bool   point_selected_surf[100000] = {0};
 bool   lidar_pushed, flg_first_scan = true, flg_exit = false, flg_EKF_inited;
 bool   scan_pub_en = false, dense_pub_en = false, scan_body_pub_en = false;
-int lidar_type;
 
 vector<vector<int>>  pointSearchInd_surf; 
 vector<BoxPointType> cub_needrm;
@@ -139,6 +138,59 @@ geometry_msgs::PoseStamped msg_body_pose;
 
 shared_ptr<Preprocess> p_pre(new Preprocess());
 shared_ptr<ImuProcess> p_imu(new ImuProcess());
+
+ros::Publisher odomHigh_speed;
+double latest_time;
+V3D latest_P, latest_V, latest_Ba, latest_Bg, latest_acc_0, latest_gyr_0,acc_0,gyr_0;
+M3D latest_Q;
+bool init = false;
+
+void updateLatestStates(){
+    latest_time = lidar_end_time;
+    latest_P = state_point.pos;
+    latest_Q = state_point.rot;
+    latest_V = state_point.vel;
+    latest_Ba = state_point.ba;
+    latest_Bg = state_point.bg;
+    // latest_acc_0 = acc_0;
+    // latest_gyr_0 = gyr_0;
+
+}
+
+void fastPredictIMU(double t, V3D acc, V3D gyr)
+{
+    double dt = t - latest_time;
+    latest_time = t;
+    V3D un_acc_0 = latest_Q * (latest_acc_0 - latest_Ba) + V3D(state_point.grav[0],state_point.grav[1],state_point.grav[2]);
+    V3D un_gyr = 0.5 * (latest_gyr_0 + gyr) - latest_Bg;
+    latest_Q = latest_Q * Exp(un_gyr, dt);
+    V3D un_acc_1 = latest_Q * (acc - latest_Ba) + V3D(state_point.grav[0],state_point.grav[1],state_point.grav[2]);
+    V3D un_acc = 0.5 * (un_acc_0 + un_acc_1);
+    latest_P = latest_P + dt * latest_V + 0.5 * dt * dt * un_acc;
+    latest_V = latest_V + dt * un_acc;
+    latest_acc_0 = acc;
+    latest_gyr_0 = gyr;
+    nav_msgs::Odometry odomHigh;
+    Eigen::Quaterniond quadrotor_Q = Eigen::Quaterniond(latest_Q);
+    odomHigh.header.stamp =ros::Time().fromSec(t);
+    odomHigh.header.frame_id = "world";
+    odomHigh.child_frame_id = "odom_imu";
+    odomHigh.pose.pose.position.x = latest_P.x();
+    odomHigh.pose.pose.position.y = latest_P.y();
+    odomHigh.pose.pose.position.z = latest_P.z();
+    odomHigh.pose.pose.orientation.x = quadrotor_Q.x();
+    odomHigh.pose.pose.orientation.y = quadrotor_Q.y();
+    odomHigh.pose.pose.orientation.z = quadrotor_Q.z();
+    odomHigh.pose.pose.orientation.w = quadrotor_Q.w();
+    odomHigh.twist.twist.linear.x = latest_V.x();
+    odomHigh.twist.twist.linear.y = latest_V.y();
+    odomHigh.twist.twist.linear.z = latest_V.z();
+    odomHigh.twist.twist.angular.x = gyr.x() - state_point.bg.x();
+    odomHigh.twist.twist.angular.y = gyr.y() - state_point.bg.y();
+    odomHigh.twist.twist.angular.z = gyr.z() - state_point.bg.z();
+
+    odomHigh_speed.publish(odomHigh);    
+}
 
 void SigHandle(int sig)
 {
@@ -339,6 +391,17 @@ void imu_cbk(const sensor_msgs::Imu::ConstPtr &msg_in)
     // cout<<"IMU got at: "<<msg_in->header.stamp.toSec()<<endl;
     sensor_msgs::Imu::Ptr msg(new sensor_msgs::Imu(*msg_in));
 
+    msg->linear_acceleration.x *= G_m_s2;
+    msg->linear_acceleration.y *= G_m_s2;
+    msg->linear_acceleration.z *= G_m_s2;
+
+    if(init)
+    {
+        fastPredictIMU(msg->header.stamp.toSec(),
+                V3D(msg->linear_acceleration.x,msg->linear_acceleration.y,msg->linear_acceleration.z),
+                V3D(msg->angular_velocity.x,msg->angular_velocity.y,msg->angular_velocity.z));
+    }
+
     msg->header.stamp = ros::Time().fromSec(msg_in->header.stamp.toSec() - time_diff_lidar_to_imu);
     if (abs(timediff_lidar_wrt_imu) > 0.1 && time_sync_en)
     {
@@ -376,8 +439,6 @@ bool sync_packages(MeasureGroup &meas)
     {
         meas.lidar = lidar_buffer.front();
         meas.lidar_beg_time = time_buffer.front();
-
-
         if (meas.lidar->points.size() <= 1) // time too little
         {
             lidar_end_time = meas.lidar_beg_time + lidar_mean_scantime;
@@ -393,8 +454,6 @@ bool sync_packages(MeasureGroup &meas)
             lidar_end_time = meas.lidar_beg_time + meas.lidar->points.back().curvature / double(1000);
             lidar_mean_scantime += (meas.lidar->points.back().curvature / double(1000) - lidar_mean_scantime) / scan_num;
         }
-        if(lidar_type == MARSIM)
-            lidar_end_time = meas.lidar_beg_time;
 
         meas.lidar_end_time = lidar_end_time;
 
@@ -779,7 +838,7 @@ int main(int argc, char** argv)
     nh.param<double>("mapping/b_gyr_cov",b_gyr_cov,0.0001);
     nh.param<double>("mapping/b_acc_cov",b_acc_cov,0.0001);
     nh.param<double>("preprocess/blind", p_pre->blind, 0.01);
-    nh.param<int>("preprocess/lidar_type", lidar_type, AVIA);
+    nh.param<int>("preprocess/lidar_type", p_pre->lidar_type, AVIA);
     nh.param<int>("preprocess/scan_line", p_pre->N_SCANS, 16);
     nh.param<int>("preprocess/timestamp_unit", p_pre->time_unit, US);
     nh.param<int>("preprocess/scan_rate", p_pre->SCAN_RATE, 10);
@@ -791,8 +850,6 @@ int main(int argc, char** argv)
     nh.param<int>("pcd_save/interval", pcd_save_interval, -1);
     nh.param<vector<double>>("mapping/extrinsic_T", extrinT, vector<double>());
     nh.param<vector<double>>("mapping/extrinsic_R", extrinR, vector<double>());
-
-    p_pre->lidar_type = lidar_type;
     cout<<"p_pre->lidar_type "<<p_pre->lidar_type<<endl;
     
     path.header.stamp    = ros::Time::now();
@@ -822,7 +879,7 @@ int main(int argc, char** argv)
     p_imu->set_acc_cov(V3D(acc_cov, acc_cov, acc_cov));
     p_imu->set_gyr_bias_cov(V3D(b_gyr_cov, b_gyr_cov, b_gyr_cov));
     p_imu->set_acc_bias_cov(V3D(b_acc_cov, b_acc_cov, b_acc_cov));
-    p_imu->lidar_type = lidar_type;
+
     double epsi[23] = {0.001};
     fill(epsi, epsi+23, 0.001);
     kf.init_dyn_share(get_f, df_dx, df_dw, h_share_model, NUM_MAX_ITERATIONS, epsi);
@@ -858,6 +915,8 @@ int main(int argc, char** argv)
             ("/Odometry", 100000);
     ros::Publisher pubPath          = nh.advertise<nav_msgs::Path> 
             ("/path", 100000);
+    odomHigh_speed = nh.advertise<nav_msgs::Odometry>
+            ("/Odom_high_freq",10000);
 //------------------------------------------------------------------------------------------------------
     signal(SIGINT, SigHandle);
     ros::Rate rate(5000);
@@ -967,6 +1026,9 @@ int main(int argc, char** argv)
             geoQuat.w = state_point.rot.coeffs()[3];
 
             double t_update_end = omp_get_wtime();
+
+            init = true;
+            updateLatestStates();
 
             /******* Publish odometry *******/
             publish_odometry(pubOdomAftMapped);
