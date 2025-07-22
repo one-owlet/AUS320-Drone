@@ -1,0 +1,7 @@
+<launch>
+
+    <include file="$(find realsense2_camera)/launch/rs_camera.launch" />
+
+    <node pkg="front_camera" type="qrcode_detect_f" name="qrcode_detect_f" />
+
+</launch>

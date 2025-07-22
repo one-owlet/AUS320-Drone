@@ -1,0 +1,17 @@
+.vscode/
+build/
+devel/
+images/
+replay/
+
+*.o
+*.so
+*.bag
+*.log
+*.xlsx
+*.md
+*.pdf
+*.catkin_workspace
+*.txt
+*.png
+*.jpg

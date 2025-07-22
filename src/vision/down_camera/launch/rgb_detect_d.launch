@@ -1,0 +1,5 @@
+<launch>
+
+    <node pkg="down_camera" type="rgb_detect_d" name="rgb_detect_d" output="screen" />
+
+</launch>
