@@ -17,7 +17,7 @@ sleep 5s
 {
     gnome-terminal --title "odometry_viewr" -- bash -c \
    "$PUBLIC && \
-    rostopic echo /Odom_high_freq; \
+    rostopic echo /Odom_high_freq --noarr; \
     exec bash"
 }&
 
