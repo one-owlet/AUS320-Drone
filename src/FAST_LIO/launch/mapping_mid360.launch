@@ -2,7 +2,7 @@
 <!-- Launch file for Livox MID360 LiDAR -->
 
 	<!-- <arg name="rviz" default="true" /> -->
-	<include file="$(find livox_ros_dirver2)/launch_ROS1/msg_MID360.launch" />
+	<include file="$(find livox_ros_driver2)/launch_ROS1/msg_MID360.launch" />
 
 	<rosparam command="load" file="$(find fast_lio)/config/mid360.yaml" />
 
