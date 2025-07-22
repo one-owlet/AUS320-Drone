@@ -19,10 +19,10 @@ mapping:
     det_range:     100.0
     extrinsic_est_en:  true      # true: enable the online estimation of IMU-LiDAR extrinsic
     # extrinsic_T: [ -0.011, -0.02329, 0.04412 ]
-    extrinsic_T: [ 0.0, 0.0, 0.0 ]
-    extrinsic_R: [ 1, 0, 0,
-                   0, 1, 0,
-                   0, 0, 1]
+    extrinsic_T: [ -0.021397, -0.004998, -0.011814 ]
+    extrinsic_R: [ 0.999979, -0.006479, 0.000896,
+                   0.006479, 0.999979, 0.000101,
+                   -0.000897, -0.000095, 1.000000]
 
 publish:
     path_en:  true

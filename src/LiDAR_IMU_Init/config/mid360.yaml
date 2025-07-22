@@ -1,6 +1,6 @@
 common:
     lid_topic:  "/livox/lidar"
-    imu_topic:  "/mavros/imu/data_raw"
+    imu_topic:  "/livox/imu"
 
 preprocess:
     lidar_type: 1                # Livox series LiDAR
@@ -11,7 +11,7 @@ preprocess:
 initialization:
     cut_frame_num: 5            # must be positive integer
     orig_odom_freq: 10           # original Lidar frequency
-    mean_acc_norm: 9.805         # 1 for livox built-in IMU
+    mean_acc_norm: 1         # 1 for livox built-in IMU
     online_refine_time: 20     # seconds
     data_accum_length: 500
     Rot_LI_cov: [ 0.00005, 0.00005, 0.00005 ]
