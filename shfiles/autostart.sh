@@ -6,7 +6,7 @@ PUBLIC="source /opt/ros/noetic/setup.bash && \
         export ROS_MASTER_URI=http://192.168.1.250:11311 && \
         export ROS_IP=192.168.1.250"
 
-# Launch FAST-LIO2 for AUS320-Drone
+# Launch FAST-LIO2
 sleep 5s
 {
     gnome-terminal --title "FAST-LIO2" -- bash -c \
@@ -21,6 +21,15 @@ sleep 5s
     gnome-terminal --title "odometry_viewer" -- bash -c \
    "$PUBLIC && \
     rostopic echo /Odom_high_freq --noarr; \
+    exec bash"
+}&
+
+# Launch EGO-Planner
+sleep 5s
+{
+    gnome-terminal --title "EGO-Planner" -- bash -c \
+   "$PUBLIC && \
+    roslaunch ego_planner single_run_in_exp.launch; \
     exec bash"
 }&
 
