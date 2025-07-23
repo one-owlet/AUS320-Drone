@@ -26,7 +26,7 @@ sleep 5s
 }&
 
 # Launch VINS-Fusion for fast-drone-250
-sleep 5s
+sleep 10s
 {
     gnome-terminal --title "VINS-Fusion" -- bash -c \
    "$PUBLIC && \
