@@ -6,8 +6,8 @@
     <arg name="map_size_x" value="20"/>
     <arg name="map_size_y" value="15"/>
     <arg name="map_size_z" value="3.0"/>
-    <!-- <arg name="odom_topic" value="/vins_fusion/imu_propagate"/> -->
-    <arg name="odom_topic" value="/Odom_high_freq"/>
+    <arg name="odom_topic" value="/vins_fusion/imu_propagate"/>
+    <!-- <arg name="odom_topic" value="/Odom_high_freq"/> -->
     
     <!-- main algorithm params -->
     <include file="$(find ego_planner)/launch/advanced_param_exp.xml">
@@ -24,7 +24,8 @@
         <arg name="depth_topic" value="/camera/depth/image_rect_raw"/>
         <!-- topic of point cloud measurement, such as from LIDAR  -->
         <!-- don't set camera pose and depth, if you already set this one! -->
-         <arg name="cloud_topic" value="/cloud_registered"/>
+        <!-- <arg name="cloud_topic" value="/cloud_registered"/> -->
+        <arg name="cloud_topic" value="nouse2"/>
         <!-- <arg name="cloud_topic" value="/cloud_registered"/> -->
         <!-- intrinsic params of the depth camera -->
         <arg name="cx" value="320.74005126953125"/>
@@ -42,19 +43,19 @@
         <arg name="flight_type" value="1" />
         <!-- global waypoints -->
         <!-- It generates a piecewise min-snap traj passing all waypoints -->
-        <arg name="point_num" value="5" />
+        <arg name="point_num" value="2" />
 
         <arg name="point0_x" value="0.0" />
         <arg name="point0_y" value="0.0" />
         <arg name="point0_z" value="1.0" />
 
-        <arg name="point1_x" value="1.5" />
+        <arg name="point1_x" value="0.8" />
         <arg name="point1_y" value="0.0" />
-        <arg name="point1_z" value="1.2" />
+        <arg name="point1_z" value="1.0" />
         
-        <arg name="point2_x" value="3.0" />
+        <arg name="point2_x" value="0.0" />
         <arg name="point2_y" value="0.0" />
-        <arg name="point2_z" value="0.25" />
+        <arg name="point2_z" value="1.0" />
         
         <arg name="point3_x" value="1.5" />
         <arg name="point3_y" value="0.0" />
