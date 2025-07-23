@@ -6,31 +6,12 @@ PUBLIC="source /opt/ros/noetic/setup.bash && \
         export ROS_MASTER_URI=http://192.168.1.250:11311 && \
         export ROS_IP=192.168.1.250"
 
-# Launch RealSenseD435 Camera
+# Launch FAST-LIO2 for AUS320-Drone
 sleep 5s
 {
-    gnome-terminal --title "RealSenseD435" -- bash -c \
+    gnome-terminal --title "FAST-LIO2" -- bash -c \
    "$PUBLIC && \
-    roslaunch realsense2_camera rs_camera.launch; \
-    exec bash"
-}
-
-# Launch MAVROS for PX4
-sleep 10s
-{
-    gnome-terminal --title "PX4 Start" -- bash -c \
-   "$PUBLIC && \
-    sudo chmod 777 /dev/ttyACM0 && \
-    roslaunch mavros px4.launch; \
-    exec bash"
-}&
-
-# Launch VINS-Fusion for fast-drone-250
-sleep 10s
-{
-    gnome-terminal --title "VINS-Fusion" -- bash -c \
-   "$PUBLIC && \
-    roslaunch vins fast_drone_250.launch; \
+    roslaunch fast_lio mapping_mid360.launch; \
     exec bash"
 }&
 
@@ -39,7 +20,17 @@ sleep 5s
 {
     gnome-terminal --title "odometry_viewer" -- bash -c \
    "$PUBLIC && \
-    rostopic echo /vins_fusion/imu_propagate --noarr; \
+    rostopic echo /Odom_high_freq --noarr; \
+    exec bash"
+}&
+
+# Launch MAVROS for PX4
+sleep 5s
+{
+    gnome-terminal --title "PX4 Start" -- bash -c \
+   "$PUBLIC && \
+    sudo chmod 777 /dev/ttyACM0 && \
+    roslaunch mavros px4.launch; \
     exec bash"
 }&
 
