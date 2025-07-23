@@ -1,27 +1,22 @@
 #!/bin/bash
 
+# Public environment variables for ROS
 PUBLIC="source /opt/ros/noetic/setup.bash && \
         source /home/fast-drone/AUS320-Drone/devel/setup.bash && \
         export ROS_MASTER_URI=http://192.168.1.250:11311 && \
         export ROS_IP=192.168.1.250"
 
-sleep 5s
+# Launch RealSenseD435 Camera
+sleep 1s
 {
-    gnome-terminal --title "FAST-LIO2" -- bash -c \
+    gnome-terminal --title "RealSenseD435" -- bash -c \
    "$PUBLIC && \
-    roslaunch fast_lio mapping_mid360.launch; \
+    roslaunch realsense2_camera rs_camera.launch; \
     exec bash"
-}&
+}
 
+# Launch MAVROS for PX4
 sleep 5s
-{
-    gnome-terminal --title "odometry_viewr" -- bash -c \
-   "$PUBLIC && \
-    rostopic echo /Odom_high_freq --noarr; \
-    exec bash"
-}&
-
-sleep 2s
 {
     gnome-terminal --title "PX4 Start" -- bash -c \
    "$PUBLIC && \
@@ -30,6 +25,25 @@ sleep 2s
     exec bash"
 }&
 
+# Launch VINS-Fusion for fast-drone-250
+sleep 5s
+{
+    gnome-terminal --title "VINS-Fusion" -- bash -c \
+   "$PUBLIC && \
+    roslaunch vins fast_drone_250.launch; \
+    exec bash"
+}&
+
+# View Odometry Data
+sleep 5s
+{
+    gnome-terminal --title "odometry_viewer" -- bash -c \
+   "$PUBLIC && \
+    rostopic echo /vins_fusion/imu_propagate --noarr; \
+    exec bash"
+}&
+
+# Launch PX4 Control
 sleep 5s
 {
     gnome-terminal --title "PX4 Control" -- bash -c \
