@@ -7,7 +7,7 @@ PUBLIC="source /opt/ros/noetic/setup.bash && \
         export ROS_IP=192.168.1.250"
 
 # Launch RealSenseD435 Camera
-sleep 1s
+sleep 5s
 {
     gnome-terminal --title "RealSenseD435" -- bash -c \
    "$PUBLIC && \
@@ -16,7 +16,7 @@ sleep 1s
 }
 
 # Launch MAVROS for PX4
-sleep 5s
+sleep 10s
 {
     gnome-terminal --title "PX4 Start" -- bash -c \
    "$PUBLIC && \
