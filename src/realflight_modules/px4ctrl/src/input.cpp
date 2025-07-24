@@ -305,3 +305,22 @@ void Takeoff_Land_Data_t::feed(quadrotor_msgs::TakeoffLandConstPtr pMsg)
     triggered = true;
     takeoff_land_cmd = pMsg->takeoff_land_cmd;
 }
+
+// anyi
+void CustomPositionCmd_t::feed(const geometry_msgs::Twist::ConstPtr& msg)
+{
+    std::lock_guard<std::mutex> lock(custom_pos_cmd.mutex);
+    // 从linear字段获取位置信息
+    custom_pos_cmd.position(0) = msg->linear.x;
+    custom_pos_cmd.position(1) = msg->linear.y;
+    custom_pos_cmd.position(2) = msg->linear.z;
+    
+    // 从angular.z字段获取yaw角度（角度制）
+    custom_pos_cmd.yaw = msg->angular.z;
+    
+    custom_pos_cmd.updated = true;
+    ROS_INFO("[px4ctrl] Received custom position command: x=%.2f, y=%.2f, z=%.2f, yaw=%.2f", 
+             custom_pos_cmd.position(0), custom_pos_cmd.position(1), 
+             custom_pos_cmd.position(2), custom_pos_cmd.yaw);
+}
+// anyi

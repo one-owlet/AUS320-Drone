@@ -664,22 +664,3 @@ void PX4CtrlFSM::reboot_FCU()
 	// if (param.print_dbg)
 	// 	printf("reboot result=%d(uint8_t), success=%d(uint8_t)\n", reboot_srv.response.result, reboot_srv.response.success);
 }
-
-// anyi
-void PX4CtrlFSM::customPosCallback(const geometry_msgs::Twist::ConstPtr& msg)
-{
-    std::lock_guard<std::mutex> lock(custom_pos_cmd.mutex);
-    // 从linear字段获取位置信息
-    custom_pos_cmd.position(0) = msg->linear.x;
-    custom_pos_cmd.position(1) = msg->linear.y;
-    custom_pos_cmd.position(2) = msg->linear.z;
-    
-    // 从angular.z字段获取yaw角度（角度制）
-    custom_pos_cmd.yaw = msg->angular.z;
-    
-    custom_pos_cmd.updated = true;
-    ROS_INFO("[px4ctrl] Received custom position command: x=%.2f, y=%.2f, z=%.2f, yaw=%.2f", 
-             custom_pos_cmd.position(0), custom_pos_cmd.position(1), 
-             custom_pos_cmd.position(2), custom_pos_cmd.yaw);
-}
-// anyi

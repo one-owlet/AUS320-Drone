@@ -14,6 +14,11 @@
 #include <uav_utils/utils.h>
 #include "PX4CtrlParam.h"
 
+// changed by anyi 2025.7.24
+#include <mutex>
+#include <geometry_msgs/Twist.h>
+// anyi end
+
 class RC_Data_t
 {
 public:
@@ -143,6 +148,18 @@ public:
 
   Takeoff_Land_Data_t();
   void feed(quadrotor_msgs::TakeoffLandConstPtr pMsg);
+};
+
+class CustomPositionCmd_t 
+{
+public:
+	Eigen::Vector3d position;
+	double yaw;
+	bool updated;
+	std::mutex mutex;
+
+	CustomPositionCmd_t() : position(Eigen::Vector3d::Zero()), yaw(0.0), updated(false) {}
+	void feed(const geometry_msgs::Twist::ConstPtr& msg);
 };
 
 #endif

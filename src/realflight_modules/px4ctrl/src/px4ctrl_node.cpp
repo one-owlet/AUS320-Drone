@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     ros::Subscriber custom_pos_sub =
         nh.subscribe<geometry_msgs::Twist>("/px4ctrl/custom_position", 
                                         10, 
-                                        boost::bind(&PX4CtrlFSM::customPosCallback, &fsm, _1),
+                                        boost::bind(&CustomPositionCmd_t::feed, &fsm.custom_pos_cmd, _1),
                                         ros::VoidConstPtr(),
                                         ros::TransportHints().tcpNoDelay());
     // anyi
