@@ -153,6 +153,7 @@ public:
 class CustomPositionCmd_t 
 {
 public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 	Eigen::Vector3d position;
 	double yaw;
 	bool updated;
