@@ -53,9 +53,9 @@ public:
 	Eigen::Vector4d hover_pose;
 	ros::Time last_set_hover_pose_time;
 
-// changed by anyi 2025.7.24
-	CustomPositionCmd_t custom_pos_cmd;
-// anyi end
+// AUS320
+	WayPoint_t waypoint_data;
+// AUS320
 
 	enum State_t
 	{

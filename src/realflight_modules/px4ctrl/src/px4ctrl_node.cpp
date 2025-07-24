@@ -23,14 +23,14 @@ int main(int argc, char *argv[])
     LinearControl controller(param);
     PX4CtrlFSM fsm(param, controller);
 
-    // anyi
-    ros::Subscriber custom_pos_sub =
-        nh.subscribe<geometry_msgs::Twist>("/px4ctrl/custom_position", 
-                                        10, 
-                                        boost::bind(&CustomPositionCmd_t::feed, &fsm.custom_pos_cmd, _1),
-                                        ros::VoidConstPtr(),
-                                        ros::TransportHints().tcpNoDelay());
-    // anyi
+    // AUS320
+    ros::Subscriber waypoint_sub =
+        nh.subscribe<diansai_msgs::WayPoint>("/px4ctrl/custom_waypoint", 
+                                             10,
+                                             boost::bind(&WayPoint_t::feed, &fsm.waypoint_data, _1),
+                                             ros::VoidConstPtr(),
+                                             ros::TransportHints().tcpNoDelay());
+    // AUS320
 
     ros::Subscriber state_sub =
         nh.subscribe<mavros_msgs::State>("/mavros/state",

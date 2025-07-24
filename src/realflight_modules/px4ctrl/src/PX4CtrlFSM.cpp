@@ -173,18 +173,17 @@ void PX4CtrlFSM::process()
 		}
 		else
 		{
-			// anyi
+			// AUS320
 			{
-				std::lock_guard<std::mutex> lock(custom_pos_cmd.mutex);
-				if (custom_pos_cmd.updated) {
+				std::lock_guard<std::mutex> lock(waypoint_data.mutex_);
+				if (waypoint_data.waypoint_received) {
 					// 更新悬停位置
-					hover_pose.head<3>() = custom_pos_cmd.position;
-					hover_pose(3) = custom_pos_cmd.yaw;
-					custom_pos_cmd.updated = false;  // 重要：将标志位重置为false
+					hover_pose = waypoint_data.custom_pose;
+					waypoint_data.waypoint_received = false;  // 重要：将标志位重置为false
 					ROS_INFO("[px4ctrl] Updated hover position from custom command");
 				}
 			}
-			// anyi
+			// AUS320
 			set_hov_with_rc();
 			des = get_hover_des();
 			if ((rc_data.enter_command_mode) ||

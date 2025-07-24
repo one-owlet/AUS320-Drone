@@ -14,10 +14,10 @@
 #include <uav_utils/utils.h>
 #include "PX4CtrlParam.h"
 
-// changed by anyi 2025.7.24
+// AUS320
 #include <mutex>
-#include <geometry_msgs/Twist.h>
-// anyi end
+#include <diansai_msgs/WayPoint.h>
+// AUS320
 
 class RC_Data_t
 {
@@ -150,17 +150,16 @@ public:
   void feed(quadrotor_msgs::TakeoffLandConstPtr pMsg);
 };
 
-class CustomPositionCmd_t 
+class WayPoint_t 
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-	Eigen::Vector3d position;
-	double yaw;
-	bool updated;
-	std::mutex mutex;
+  std::mutex mutex_;
+  bool waypoint_received;
+	Eigen::Vector4d custom_pose;
 
-	CustomPositionCmd_t() : position(Eigen::Vector3d::Zero()), yaw(0.0), updated(false) {}
-	void feed(const geometry_msgs::Twist::ConstPtr& msg);
+	WayPoint_t() : custom_pose(Eigen::Vector4d::Zero()), waypoint_received(false) {}
+	void feed(const diansai_msgs::WayPoint::ConstPtr& msg);
 };
 
 #endif

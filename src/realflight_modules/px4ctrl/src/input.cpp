@@ -306,21 +306,18 @@ void Takeoff_Land_Data_t::feed(quadrotor_msgs::TakeoffLandConstPtr pMsg)
     takeoff_land_cmd = pMsg->takeoff_land_cmd;
 }
 
-// anyi
-void CustomPositionCmd_t::feed(const geometry_msgs::Twist::ConstPtr& msg)
+// AUS320
+void WayPoint_t::feed(const diansai_msgs::WayPoint::ConstPtr& msg)
 {
-    std::lock_guard<std::mutex> lock(mutex);
-    // 从linear字段获取位置信息
-    position(0) = msg->linear.x;
-    position(1) = msg->linear.y;
-    position(2) = msg->linear.z;
+    std::lock_guard<std::mutex> lock(mutex_);
+    custom_pose(0) = msg->x;
+    custom_pose(1) = msg->y;
+    custom_pose(2) = msg->z;
+    custom_pose(3) = msg->yaw * M_PI / 180.0;
     
-    // 从angular.z字段获取yaw角度（角度制）
-    yaw = msg->angular.z;
-    
-    updated = true;
+    waypoint_received = true;
     ROS_INFO("[px4ctrl] Received custom position command: x=%.2f, y=%.2f, z=%.2f, yaw=%.2f", 
-             position(0), position(1), 
-             position(2), yaw);
+             custom_pose(0), custom_pose(1), 
+             custom_pose(2), custom_pose(3));
 }
-// anyi
+// AUS320
