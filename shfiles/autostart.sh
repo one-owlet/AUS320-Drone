@@ -24,14 +24,14 @@ sleep 5s
     exec bash"
 }&
 
-# Launch EGO-Planner
-sleep 5s
-{
-    gnome-terminal --title "EGO-Planner" -- bash -c \
-   "$PUBLIC && \
-    roslaunch ego_planner single_run_in_exp.launch; \
-    exec bash"
-}&
+# # Launch EGO-Planner
+# sleep 5s
+# {
+#     gnome-terminal --title "EGO-Planner" -- bash -c \
+#    "$PUBLIC && \
+#     roslaunch ego_planner single_run_in_exp.launch; \
+#     exec bash"
+# }&
 
 # Launch MAVROS for PX4
 sleep 5s
