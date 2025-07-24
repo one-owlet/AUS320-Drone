@@ -23,6 +23,15 @@ int main(int argc, char *argv[])
     LinearControl controller(param);
     PX4CtrlFSM fsm(param, controller);
 
+    // anyi
+    ros::Subscriber custom_pos_sub =
+        nh.subscribe<geometry_msgs::Twist>("/px4ctrl/custom_position", 
+                                        10, 
+                                        boost::bind(&PX4CtrlFSM::customPosCallback, &fsm, _1),
+                                        ros::VoidConstPtr(),
+                                        ros::TransportHints().tcpNoDelay());
+    // anyi
+
     ros::Subscriber state_sub =
         nh.subscribe<mavros_msgs::State>("/mavros/state",
                                          10,

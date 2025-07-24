@@ -14,6 +14,20 @@
 // #include "ThrustCurve.h"
 #include "controller.h"
 
+// changed by anyi 2025.7.24
+#include <mutex>
+#include <geometry_msgs/Twist.h>
+
+struct CustomPositionCmd_t {
+	Eigen::Vector3d position;
+	double yaw;
+	bool updated;
+	std::mutex mutex;
+	
+	CustomPositionCmd_t() : position(Eigen::Vector3d::Zero()), yaw(0.0), updated(false) {}
+};
+// anyi end
+
 struct AutoTakeoffLand_t
 {
 	bool landed{true};
@@ -53,6 +67,10 @@ public:
 	Eigen::Vector4d hover_pose;
 	ros::Time last_set_hover_pose_time;
 
+// changed by anyi 2025.7.24
+	CustomPositionCmd_t custom_pos_cmd;
+// anyi end
+
 	enum State_t
 	{
 		MANUAL_CTRL = 1, // px4ctrl is deactived. FCU is controled by the remote controller only
@@ -72,6 +90,10 @@ public:
 	bool recv_new_odom();
 	State_t get_state() { return state; }
 	bool get_landed() { return takeoff_land.landed; }
+
+// changed by anyi 2025.7.24
+	void customPosCallback(const geometry_msgs::Twist::ConstPtr& msg);
+// anyi end
 
 private:
 	State_t state; // Should only be changed in PX4CtrlFSM::process() function!
