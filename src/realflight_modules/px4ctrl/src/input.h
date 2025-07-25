@@ -25,12 +25,15 @@ public:
   double mode;
   double gear;
   double reboot_cmd;
+  double takeoff_msg;
   double last_mode;
   double last_gear;
   double last_reboot_cmd;
+  double last_takeoff_msg;
   bool have_init_last_mode{false};
   bool have_init_last_gear{false};
   bool have_init_last_reboot_cmd{false};
+  bool have_init_last_takeoff_msg{false};
   double ch[4];
 
   mavros_msgs::RCIn msg;
@@ -41,11 +44,13 @@ public:
   bool is_hover_mode;
   bool enter_hover_mode;
   bool toggle_reboot;
+  bool enter_takeoff_mode;
 
   static constexpr double GEAR_SHIFT_VALUE = 0.75;
   static constexpr double API_MODE_THRESHOLD_VALUE = 0.75;
   static constexpr double REBOOT_THRESHOLD_VALUE = 0.5;
   static constexpr double DEAD_ZONE = 0.25;
+  static constexpr double TAKEOFF_THRESHOLD_VALUE = 0.5;
 
   RC_Data_t();
   void check_validity();

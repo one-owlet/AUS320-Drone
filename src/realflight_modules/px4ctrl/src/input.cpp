@@ -6,6 +6,7 @@ RC_Data_t::RC_Data_t()
 
     last_mode = -1.0;
     last_gear = -1.0;
+    last_takeoff_msg = -1.0;
 
     // Parameter initilation is very important in RC-Free usage!
     is_hover_mode = true;
@@ -13,6 +14,7 @@ RC_Data_t::RC_Data_t()
     is_command_mode = true;
     enter_command_mode = false;
     toggle_reboot = false;
+    enter_takeoff_mode = false;
     for (int i = 0; i < 4; ++i)
     {
         ch[i] = 0.0;
@@ -38,6 +40,7 @@ void RC_Data_t::feed(mavros_msgs::RCInConstPtr pMsg)
     mode = ((double)msg.channels[4] - 1000.0) / 1000.0;
     gear = ((double)msg.channels[5] - 1000.0) / 1000.0;
     reboot_cmd = ((double)msg.channels[7] - 1000.0) / 1000.0;
+    takeoff_msg = ((double)msg.channels[8] - 1000.0) / 1000.0;
 
     check_validity();
 
@@ -55,6 +58,11 @@ void RC_Data_t::feed(mavros_msgs::RCInConstPtr pMsg)
     {
         have_init_last_reboot_cmd = true;
         last_reboot_cmd = reboot_cmd;
+    }
+    if (!have_init_last_takeoff_msg)
+    {
+        have_init_last_takeoff_msg = true;
+        last_takeoff_msg = takeoff_msg;
     }
 
     // 1
@@ -93,9 +101,16 @@ void RC_Data_t::feed(mavros_msgs::RCInConstPtr pMsg)
     else
         toggle_reboot = false;
 
+    // 4
+    if (last_takeoff_msg > TAKEOFF_THRESHOLD_VALUE && takeoff_msg < TAKEOFF_THRESHOLD_VALUE)
+        enter_takeoff_mode = true;
+    else
+        enter_takeoff_mode = false;
+
     last_mode = mode;
     last_gear = gear;
     last_reboot_cmd = reboot_cmd;
+    last_takeoff_msg = takeoff_msg;
 }
 
 void RC_Data_t::check_validity()
