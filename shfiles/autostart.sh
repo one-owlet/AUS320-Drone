@@ -16,11 +16,22 @@ sleep 5s
 }&
 
 # View Odometry Data
+
+# CLI command to view odometry data
+# sleep 5s
+# {
+#     gnome-terminal --title "odometry_viewer" -- bash -c \
+#    "$PUBLIC && \
+#     rostopic echo /Odom_high_freq --noarr; \
+#     exec bash"
+# }&
+
+# GUI command to view odometry data
 sleep 5s
 {
     gnome-terminal --title "odometry_viewer" -- bash -c \
    "$PUBLIC && \
-    rostopic echo /Odom_high_freq --noarr; \
+    rosrun rqt_plot rqt_plot /Odom_high_freq/pose/pose/position; \
     exec bash"
 }&
 
