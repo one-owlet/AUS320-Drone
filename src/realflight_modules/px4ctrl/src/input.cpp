@@ -112,7 +112,7 @@ void RC_Data_t::check_validity()
 
 bool RC_Data_t::check_centered()
 {
-    bool centered = abs(ch[0]) < 1e-5 && abs(ch[0]) < 1e-5 && abs(ch[0]) < 1e-5 && abs(ch[0]) < 1e-5;
+    bool centered = abs(ch[0]) < 1e-5 && abs(ch[1]) < 1e-5 && abs(ch[2]) < 1e-5 && abs(ch[3]) < 1e-5;
     return centered;
 }
 
