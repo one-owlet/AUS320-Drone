@@ -26,14 +26,14 @@ sleep 5s
     exec bash"
 }&
 
-# GUI command to view odometry data
-sleep 5s
-{
-    gnome-terminal --title "odometry_viewer_GUI" -- bash -c \
-   "$PUBLIC && \
-    rosrun rqt_plot rqt_plot /Odom_high_freq/pose/pose/position; \
-    exec bash"
-}&
+# # GUI command to view odometry data
+# sleep 5s
+# {
+#     gnome-terminal --title "odometry_viewer_GUI" -- bash -c \
+#    "$PUBLIC && \
+#     rosrun rqt_plot rqt_plot /Odom_high_freq/pose/pose/position; \
+#     exec bash"
+# }&
 
 # # Launch EGO-Planner
 # sleep 5s
