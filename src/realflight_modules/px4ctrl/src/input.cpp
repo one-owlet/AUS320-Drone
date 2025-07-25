@@ -102,10 +102,13 @@ void RC_Data_t::feed(mavros_msgs::RCInConstPtr pMsg)
         toggle_reboot = false;
 
     // 4
-    if (last_takeoff_msg > TAKEOFF_THRESHOLD_VALUE && takeoff_msg < TAKEOFF_THRESHOLD_VALUE)
-        enter_takeoff_mode = true;
-    else
-        enter_takeoff_mode = false;
+    if (is_hover_mode)
+    {
+        if (last_takeoff_msg > TAKEOFF_THRESHOLD_VALUE && takeoff_msg < TAKEOFF_THRESHOLD_VALUE)
+            enter_takeoff_mode = true;
+        else
+            enter_takeoff_mode = false;
+    }
 
     last_mode = mode;
     last_gear = gear;
