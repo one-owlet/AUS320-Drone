@@ -13,6 +13,7 @@
 class Camera_Data_t
 {
 public:
+    bool is_qrcode_mode{false};
     bool is_qrcode_succeed{false};
     std::set<std::string> qrcode_results;
 

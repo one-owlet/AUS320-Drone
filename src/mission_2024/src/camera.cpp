@@ -28,6 +28,8 @@ void Camera_Data_t::save_qrcode(const std::string& result)
 
 void Camera_Data_t::feed(sensor_msgs::Image::ConstPtr pmsg)
 {
+    if(!is_qrcode_mode) return;
+    
     cv_bridge::CvImagePtr cv_ptr;
     try {
         cv_ptr = cv_bridge::toCvCopy(pmsg, "bgr8");

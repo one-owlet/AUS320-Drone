@@ -94,12 +94,14 @@ int main(int argc, char  *argv[])
         }
 
         // 二维码识别
+        camera_data.is_qrcode_mode = true;
         while(ros::ok())
         {
             ros::spinOnce();
             if (camera_data.is_qrcode_succeed) 
             {
                 camera_data.is_qrcode_succeed = false;
+                camera_data.is_qrcode_mode = false;
                 ROS_INFO("已识别第%d二维码!", i);
                 break;
             }
