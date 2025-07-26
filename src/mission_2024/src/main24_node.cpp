@@ -87,6 +87,7 @@ int main(int argc, char  *argv[])
             {
                 point_data.goal_reached_cnt = 0;
                 point_data.allow_judge_arrival = false; // 禁止point_data.current_point获得里程计数据
+                camera_data.is_qrcode_mode = true; // 开启二维码识别模式
                 ROS_INFO("已到达第%d个目标点!", i);
                 break;
             }
@@ -99,6 +100,7 @@ int main(int argc, char  *argv[])
             ros::spinOnce();
             if (camera_data.is_qrcode_succeed) 
             {
+                camera_data.is_qrcode_mode = false;
                 camera_data.is_qrcode_succeed = false;
                 ROS_INFO("已识别第%d二维码!", i);
                 break;

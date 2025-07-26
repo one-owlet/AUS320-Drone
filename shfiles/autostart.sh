@@ -72,13 +72,13 @@ sleep 5s
     exec bash"
 }&
 
-# Lauch mission_2024
-# sleep 5s
-# {
-#     gnome-terminal --title "mission_2024" -- bash -c \
-#    "$PUBLIC && \
-#     rosrun mission_2024 main24_node; \
-#     exec bash"
-# }&
+Lauch mission_2024
+sleep 5s
+{
+    gnome-terminal --title "mission_2024" -- bash -c \
+   "$PUBLIC && \
+    rosrun mission_2024 main24_node; \
+    exec bash"
+}&
 
 wait
