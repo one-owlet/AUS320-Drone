@@ -30,8 +30,31 @@ int main(int argc, char  *argv[])
     
     ros::Rate r(10); // 10Hz
     
-    // 遍历目标航点
-    for(int i = 0; i <= 6; ++i)
+    // 发布起飞点
+    point_data.target_point.x = point_data.target_points[0][0];
+    point_data.target_point.y = point_data.target_points[0][1];
+    point_data.target_point.z = point_data.target_points[0][2];
+    point_data.target_point.yaw = point_data.target_points[0][3];
+
+    point_pub.publish(point_data.target_point);
+    point_data.allow_judge_arrival = true;
+
+    // 检查是否到达
+    while(ros::ok())
+    {
+        ros::spinOnce();
+        if (point_data.check_arrival(point_data.current_point, point_data.target_point)) { point_data.goal_reached_cnt++; }
+        if (point_data.goal_reached_cnt >= 30) 
+        {
+            point_data.goal_reached_cnt = 0;
+            point_data.allow_judge_arrival = false;
+            break;
+        }
+        r.sleep();
+    }
+
+    // 遍历除起飞点之外的巡航点
+    for(int i = 1; i <= 6; ++i)
     {
         // 发布目标航点
         point_data.target_point.x = point_data.target_points[i][0];
@@ -56,18 +79,19 @@ int main(int argc, char  *argv[])
             r.sleep();
         }
 
-        // 调用摄像头，识别二维码
-        camera_data.set_flag();
-        while(ros::ok())
-        {
-            ros::spinOnce();
-            if (camera_data.is_qrcode_succeed) 
-            {
-                camera_data.clear_flag();
-                break;
-            }
-            r.sleep();
-        }
+        // // 调用摄像头，识别二维码
+        // camera_data.set_flag();
+        // while(ros::ok())
+        // {
+        //     ros::spinOnce();
+        //     if (camera_data.is_qrcode_succeed) 
+        //     {
+        //         camera_data.clear_flag();
+        //         break;
+        //     }
+        //     r.sleep();
+        // }
+        
         // 调用激光笔
 
     }

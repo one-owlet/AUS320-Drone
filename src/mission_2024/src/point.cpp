@@ -11,5 +11,5 @@ bool Point_Data_t::check_arrival(const nav_msgs::Odometry& point_now, const dian
     double distance = sqrt(pow(point_now.pose.pose.position.x - point_des.x, 2) +
                            pow(point_now.pose.pose.position.y - point_des.y, 2) +
                            pow(point_now.pose.pose.position.z - point_des.z, 2));
-    return distance < 0.1; // 阈值为0.1米
+    return distance < 0.15; // 阈值为0.1米
 }
