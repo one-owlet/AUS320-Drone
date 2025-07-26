@@ -11,15 +11,16 @@ public:
     int goal_reached_cnt = 0;
     bool allow_judge_arrival = false;
     nav_msgs::Odometry current_point;
+    diansai_msgs::WayPoint bias_point;
     diansai_msgs::WayPoint target_point;
     float target_points[1+6][4] = {
-    {0.0, 0.0, 0.5, 0.0}, // x, y, z, yaw, 起飞悬停高度点
-    {0.5, 1.0, 1.0, 45.0},
-    {0.5, 0.0, 1.0, 0.0},
-    {0.5, -1.0, 1.0, -45.0},
-    {0.5, -1.0, 0.5, -45.0},
-    {0.5, 0.0, 0.5, 0.0},
-    {0.5, 1.0, 0.5, 45.0}
+    {0.0, 0.0,   0.5,  0.0  }, // x, y, z, yaw, 起飞悬停高度点
+    {0.5, 0.52,  1.37, 0.0  },
+    {0.5, 0.0,   1.37, 0.0  },
+    {0.5, -0.52, 1.37, 0.0  },
+    {0.5, -0.52, 1.0,  0.0  },
+    {0.5, 0.0,   1.0,  0.0  },
+    {0.5, 0.52,  1.0,  0.0  }
 };
     
     void feed(nav_msgs::OdometryConstPtr pMsg);

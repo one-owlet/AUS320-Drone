@@ -29,55 +29,61 @@ int main(int argc, char  *argv[])
                                          ros::TransportHints().tcpNoDelay());
     
     ros::Rate r(10); // 10Hz
+    point_data.allow_judge_arrival = true; // 允许point_data.current_point获得里程计数据
+
+    // 记录零偏
+    ros::spinOnce();
+    point_data.bias_point.x = point_data.current_point.pose.pose.position.x;
+    point_data.bias_point.y = point_data.current_point.pose.pose.position.y;
+    point_data.bias_point.z = point_data.current_point.pose.pose.position.z;
+    point_data.bias_point.yaw = 0.0;
  
-    // // 发布起飞点
-    // point_data.target_point.x = point_data.target_points[0][0];
-    // point_data.target_point.y = point_data.target_points[0][1];
-    // point_data.target_point.z = point_data.target_points[0][2];
-    // point_data.target_point.yaw = point_data.target_points[0][3];
-
-    // point_pub.publish(point_data.target_point);
-    // point_data.allow_judge_arrival = true;
-
-    // // 检查是否到达
-    // while(ros::ok())
-    // {
-    //     ros::spinOnce();
-    //     if (point_data.check_arrival(point_data.current_point, point_data.target_point)) { point_data.goal_reached_cnt++; }
-    //     if (point_data.goal_reached_cnt >= 30) 
-    //     {
-    //         point_data.goal_reached_cnt = 0;
-    //         point_data.allow_judge_arrival = false;
-    //         break;
-    //     }
-    //     r.sleep();
-    // }
+    // 发布起飞点
+    point_data.target_point.x = point_data.target_points[0][0] + point_data.bias_point.x;
+    point_data.target_point.y = point_data.target_points[0][1] + point_data.bias_point.y;
+    point_data.target_point.z = point_data.target_points[0][2] + point_data.bias_point.z;
+    point_data.target_point.yaw = point_data.target_points[0][3] + point_data.bias_point.yaw;
+    point_pub.publish(point_data.target_point);
+    
+    // 检查是否到达
+    while(ros::ok())
+    {
+        ros::spinOnce();
+        if (point_data.check_arrival(point_data.current_point, point_data.target_point)) { point_data.goal_reached_cnt++; }
+        if (point_data.goal_reached_cnt >= 30) 
+        {
+            point_data.goal_reached_cnt = 0;
+            point_data.allow_judge_arrival = false; // 禁止point_data.current_point获得里程计数据
+            break;
+        }
+        r.sleep();
+    }
 
     // 遍历除起飞点之外的巡航点
     for(int i = 1; i <= 6; ++i)
     {
-        // // 发布目标航点
-        // point_data.target_point.x = point_data.target_points[i][0];
-        // point_data.target_point.y = point_data.target_points[i][1];
-        // point_data.target_point.z = point_data.target_points[i][2];
-        // point_data.target_point.yaw = point_data.target_points[i][3];
+        // 发布目标航点
+        point_data.target_point.x = point_data.target_points[i][0] + point_data.bias_point.x;
+        point_data.target_point.y = point_data.target_points[i][1] + point_data.bias_point.y;
+        point_data.target_point.z = point_data.target_points[i][2] + point_data.bias_point.z;
+        point_data.target_point.yaw = point_data.target_points[i][3] + point_data.bias_point.yaw;
         
-        // point_pub.publish(point_data.target_point); 
-        // point_data.allow_judge_arrival = true;
+        point_pub.publish(point_data.target_point); 
+        point_data.allow_judge_arrival = true; // 允许point_data.current_point获得里程计数据
 
-        // // 检查是否到达
-        // while(ros::ok())
-        // {
-        //     ros::spinOnce();
-        //     if (point_data.check_arrival(point_data.current_point, point_data.target_point)) { point_data.goal_reached_cnt++; }
-        //     if (point_data.goal_reached_cnt >= 30) 
-        //     {
-        //         point_data.goal_reached_cnt = 0;
-        //         point_data.allow_judge_arrival = false;
-        //         break;
-        //     }
-        //     r.sleep();
-        // }
+        // 检查是否到达
+        while(ros::ok())
+        {
+            ros::spinOnce();
+            if (point_data.check_arrival(point_data.current_point, point_data.target_point)) { point_data.goal_reached_cnt++; }
+            if (point_data.goal_reached_cnt >= 30) 
+            {
+                point_data.goal_reached_cnt = 0;
+                point_data.allow_judge_arrival = false; // 禁止point_data.current_point获得里程计数据
+                break;
+            }
+            r.sleep();
+        }
 
         // 调用摄像头，识别二维码
         camera_data.set_flag();
