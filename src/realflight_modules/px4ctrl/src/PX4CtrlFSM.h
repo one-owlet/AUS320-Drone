@@ -54,7 +54,7 @@ public:
 	ros::Time last_set_hover_pose_time;
 
 // AUS320
-	WayPoint_t waypoint_data;
+	WayPoint_Data_t waypoint_data;
 // AUS320
 
 	enum State_t

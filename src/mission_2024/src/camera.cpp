@@ -1,10 +1,5 @@
 #include "camera.h"
 
-Camera_Data_t::Camera_Data_t()
-{
-
-}
-
 void Camera_Data_t::set_flag()
 {
     is_qrcode_mode = true;

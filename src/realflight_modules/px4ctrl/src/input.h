@@ -155,7 +155,7 @@ public:
   void feed(quadrotor_msgs::TakeoffLandConstPtr pMsg);
 };
 
-class WayPoint_t 
+class WayPoint_Data_t 
 {
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -163,7 +163,7 @@ public:
   bool waypoint_received;
 	Eigen::Vector4d custom_pose;
 
-	WayPoint_t() : custom_pose(Eigen::Vector4d::Zero()), waypoint_received(false) {}
+	WayPoint_Data_t() : custom_pose(Eigen::Vector4d::Zero()), waypoint_received(false) {}
 	void feed(const diansai_msgs::WayPoint::ConstPtr& msg);
 };
 

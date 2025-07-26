@@ -24,6 +24,6 @@ public:
     void clear_flag();
     void save_qrcode(const std::string& result);
     void feed(sensor_msgs::Image::ConstPtr pmsg);
-}
+};
 
-#endif
+#endif // __CAMERA_H__

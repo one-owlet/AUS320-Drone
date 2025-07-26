@@ -916,7 +916,7 @@ int main(int argc, char** argv)
     ros::Publisher pubPath          = nh.advertise<nav_msgs::Path> 
             ("/path", 100000);
     odomHigh_speed = nh.advertise<nav_msgs::Odometry>
-            ("/Odom_high_freq",10000);
+            ("/odom_high_freq",10000);
 //------------------------------------------------------------------------------------------------------
     signal(SIGINT, SigHandle);
     ros::Rate rate(5000);

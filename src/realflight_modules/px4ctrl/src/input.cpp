@@ -325,7 +325,7 @@ void Takeoff_Land_Data_t::feed(quadrotor_msgs::TakeoffLandConstPtr pMsg)
 }
 
 // AUS320
-void WayPoint_t::feed(const diansai_msgs::WayPoint::ConstPtr& msg)
+void WayPoint_Data_t::feed(const diansai_msgs::WayPoint::ConstPtr& msg)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     custom_pose(0) = msg->x;

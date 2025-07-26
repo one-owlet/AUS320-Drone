@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     ros::Subscriber waypoint_sub =
         nh.subscribe<diansai_msgs::WayPoint>("/px4ctrl/custom_waypoint", 
                                              10,
-                                             boost::bind(&WayPoint_t::feed, &fsm.waypoint_data, _1),
+                                             boost::bind(&WayPoint_Data_t::feed, &fsm.waypoint_data, _1),
                                              ros::VoidConstPtr(),
                                              ros::TransportHints().tcpNoDelay());
     // AUS320

@@ -22,7 +22,7 @@ sleep 5s
 {
     gnome-terminal --title "odometry_viewer_CLI" -- bash -c \
    "$PUBLIC && \
-    rostopic echo /Odom_high_freq --noarr; \
+    rostopic echo /odom_high_freq --noarr; \
     exec bash"
 }&
 
@@ -31,7 +31,7 @@ sleep 5s
 # {
 #     gnome-terminal --title "odometry_viewer_GUI" -- bash -c \
 #    "$PUBLIC && \
-#     rosrun rqt_plot rqt_plot /Odom_high_freq/pose/pose/position; \
+#     rosrun rqt_plot rqt_plot /odom_high_freq/pose/pose/position; \
 #     exec bash"
 # }&
 
