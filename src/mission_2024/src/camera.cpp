@@ -11,7 +11,7 @@ void Camera_Data_t::save_qrcode(const std::string& result)
     // 检查二维码结果是否已存在
     if (qrcode_results.find(result) == qrcode_results.end()) 
     {
-        ROS_INFO("QR code detected: %s", result.c_str());
+        // 获取保存路径
         std::string path = ros::package::getPath("mission_2024") + "/qrcode/result.txt";
 
         // 以追加模式打开文件，不存在自动创建
