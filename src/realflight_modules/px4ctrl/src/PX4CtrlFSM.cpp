@@ -182,7 +182,10 @@ void PX4CtrlFSM::process()
 					waypoint_data.waypoint_received = false;  // 重要：将标志位重置为false
 					ROS_INFO("[px4ctrl] Updated hover position from custom command");
 				}
-				hover_pose(3) += M_PI / 180 * ( (waypoint_data.custom_pose(3) - hover_pose(3) > 0) ? 1 : -1);
+				if( abs(waypoint_data.custom_pose(3) - hover_pose(3)) > M_PI / 180 / 2 )
+				{
+					hover_pose(3) += M_PI / 180 / 2 * ( (waypoint_data.custom_pose(3) - hover_pose(3) > 0) ? 1 : -1);
+				}
 			}
 			// AUS320
 			set_hov_with_rc();

@@ -24,6 +24,7 @@ void Camera_Data_t::save_qrcode(const std::string& result)
         ROS_INFO("Saved new QR code result: %s", result.c_str());
 
         qrcode_results.insert(result);  // 记录已保存内容
+        is_qrcode_succeed = true; // 设置成功标志
     }
     // 否则不打印也不保存，避免刷屏和重复写入
 }
@@ -92,7 +93,6 @@ void Camera_Data_t::feed(sensor_msgs::Image::ConstPtr pmsg)
 
         // 仅保存一次
         Camera_Data_t::save_qrcode(result);
-        is_qrcode_succeed = true; // 设置为 true，防止再写入
         ROS_INFO("QR code detected: %s", result.c_str());
     }
 }
