@@ -2,6 +2,7 @@
 
 void Point_Data_t::feed(nav_msgs::OdometryConstPtr pMsg)
 {
+    if(!allow_judge_arrival) return; // 如果已经到达目标点，则不再更新当前点
     current_point = *pMsg;
 }
 

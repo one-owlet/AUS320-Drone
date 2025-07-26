@@ -9,7 +9,7 @@ int main(int argc, char  *argv[])
 {
     setlocale(LC_ALL,"");
     ros::init(argc,argv,"main24_node");
-    ros::NodeHandle nh(~);
+    ros::NodeHandle nh("~");
     
     ros::Publisher point_pub = 
         nh.advertise<diansai_msgs::WayPoint>("/px4ctrl/custom_waypoint",10);
@@ -34,17 +34,23 @@ int main(int argc, char  *argv[])
     for(int i = 0; i <= 6; ++i)
     {
         // 发布目标航点
-        point_data.target_point = point_data.target_points[i]; 
-        point_pub.publish(point_data.target_point); 
+        point_data.target_point.x = point_data.target_points[i][0];
+        point_data.target_point.y = point_data.target_points[i][1];
+        point_data.target_point.z = point_data.target_points[i][2];
+        point_data.target_point.yaw = point_data.target_points[i][3];
         
+        point_pub.publish(point_data.target_point); 
+        point_data.allow_judge_arrival = true;
+
         // 检查是否到达
         while(ros::ok())
         {
             ros::spinOnce();
-            if (check_arrival(current_odom, target_waypoint)) { point_data.goal_reached_cnt++; }
+            if (point_data.check_arrival(point_data.current_point, point_data.target_point)) { point_data.goal_reached_cnt++; }
             if (point_data.goal_reached_cnt >= 30) 
             {
                 point_data.goal_reached_cnt = 0;
+                point_data.allow_judge_arrival = false;
                 break;
             }
             r.sleep();

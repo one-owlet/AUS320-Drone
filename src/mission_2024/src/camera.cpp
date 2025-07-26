@@ -44,7 +44,7 @@ void Camera_Data_t::feed(sensor_msgs::Image::ConstPtr pmsg)
     cv::cvtColor(cv_ptr->image, gray, cv::COLOR_BGR2GRAY);
 
     zbar::ImageScanner scanner;
-    scanner.set_config(ZBAR_QRCODE, ZBAR_CFG_ENABLE, 1);
+    scanner.set_config(zbar::ZBAR_QRCODE, zbar::ZBAR_CFG_ENABLE, 1);
     zbar::Image zbar_img(gray.cols, gray.rows, "Y800", gray.data, gray.cols * gray.rows);
     scanner.scan(zbar_img);
 
@@ -53,10 +53,11 @@ void Camera_Data_t::feed(sensor_msgs::Image::ConstPtr pmsg)
     // 图像中心
     cv::Point2f image_center(cv_ptr->image.cols / 2.0f, cv_ptr->image.rows / 2.0f);
 
-    const zbar::Symbol* closest_symbol = nullptr;
+    // 修改：使用迭代器而不是地址
+    zbar::Image::SymbolIterator closest_symbol;
+    bool found = false;
     double min_distance = std::numeric_limits<double>::max();
 
-    // 遍历所有二维码，找离中心最近的
     for (auto symbol = zbar_img.symbol_begin(); symbol != zbar_img.symbol_end(); ++symbol) {
         float avg_x = 0, avg_y = 0;
         int n = symbol->get_location_size();
@@ -68,13 +69,14 @@ void Camera_Data_t::feed(sensor_msgs::Image::ConstPtr pmsg)
         avg_y /= n;
         double dist = std::hypot(avg_x - image_center.x, avg_y - image_center.y);
 
-        if (dist < min_distance) {
+        if (!found || dist < min_distance) {
             min_distance = dist;
-            closest_symbol = &(*symbol);
+            closest_symbol = symbol;
+            found = true;
         }
     }
 
-    if (closest_symbol) {
+    if (found) {
         std::string result = closest_symbol->get_data();
 
         // 绘制边框
@@ -88,11 +90,13 @@ void Camera_Data_t::feed(sensor_msgs::Image::ConstPtr pmsg)
         cv::polylines(cv_ptr->image, points, true, cv::Scalar(0, 255, 0), 2);
         cv::putText(cv_ptr->image, result, points[0], cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 0, 255), 2);
 
+        // 仅保存一次
         Camera_Data_t::save_qrcode(result);
-        is_qrcode_succeed = true;
+        is_qrcode_succeed = true; // 设置为 true，防止再写入
         ROS_INFO("QR code detected: %s", result.c_str());
     }
 }
+
 
 void Camera_Data_t::clear_flag()
 {

@@ -163,7 +163,7 @@ public:
   bool waypoint_received;
 	Eigen::Vector4d custom_pose;
 
-	WayPoint_Data_t() : custom_pose(Eigen::Vector4d::Zero()), waypoint_received(false) {}
+	WayPoint_Data_t() : waypoint_received(false), custom_pose(Eigen::Vector4d::Zero()) {}
 	void feed(const diansai_msgs::WayPoint::ConstPtr& msg);
 };
 
