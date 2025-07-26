@@ -1,6 +1,7 @@
 #include "point.h"
 #include "camera.h"
-#include "std_msgs/String.h"
+#include <std_msgs/String.h>
+#include <quadrotor_msgs/TakeoffLand.h>
 
 Point_Data_t point_data;
 Camera_Data_t camera_data;
@@ -13,6 +14,9 @@ int main(int argc, char  *argv[])
     
     ros::Publisher point_pub = 
         nh.advertise<diansai_msgs::WayPoint>("/px4ctrl/custom_waypoint",10);
+
+    ros::Publisher land_pub = 
+        nh.advertise<quadrotor_msgs::TakeoffLand>("/px4ctrl/takeoff_land", 100);
 
     ros::Subscriber point_sub =
         nh.subscribe<nav_msgs::Odometry>("/odom_high_freq",
@@ -105,6 +109,36 @@ int main(int argc, char  *argv[])
         // 激光笔指示
 
     }
+
+    // 发布最终航点
+    point_data.target_point.x = point_data.bias_point.x;
+    point_data.target_point.y = point_data.bias_point.y;
+    point_data.target_point.z = point_data.bias_point.z + 0.3;
+    point_data.target_point.yaw = point_data.bias_point.yaw;
+    
+    point_pub.publish(point_data.target_point); 
+    point_data.allow_judge_arrival = true; // 允许point_data.current_point获得里程计数据
+
+    // 检查是否到达
+    while(ros::ok())
+    {
+        ros::spinOnce();
+        if (point_data.check_arrival(point_data.current_point, point_data.target_point)) { point_data.goal_reached_cnt++; }
+        if (point_data.goal_reached_cnt >= 30) 
+        {
+            point_data.goal_reached_cnt = 0;
+            point_data.allow_judge_arrival = false; // 禁止point_data.current_point获得里程计数据
+            ROS_INFO("已到达降落点上方!");
+            break;
+        }
+        r.sleep();
+    }
+
+    // 发布降落指令
+    quadrotor_msgs::TakeoffLand land_msg;
+    land_msg.takeoff_land_cmd = quadrotor_msgs::TakeoffLand::LAND;
+    land_pub.publish(land_msg);
+    ROS_INFO("已发布降落指令!");
 
     return 0;
 }
