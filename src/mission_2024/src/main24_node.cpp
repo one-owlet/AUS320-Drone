@@ -13,7 +13,7 @@ int main(int argc, char  *argv[])
     ros::NodeHandle nh("~");
     
     ros::Publisher point_pub = 
-        nh.advertise<diansai_msgs::WayPoint>("/px4ctrl/custom_waypoint",10);
+        nh.advertise<diansai_msgs::WayPoint>("/px4ctrl/custom_waypoint", 10);
 
     ros::Publisher land_pub = 
         nh.advertise<quadrotor_msgs::TakeoffLand>("/px4ctrl/takeoff_land", 100);
