@@ -10,7 +10,7 @@ int main(int argc, char  *argv[])
 {
     setlocale(LC_ALL,"");
     ros::init(argc,argv,"main24_node");
-    ros::NodeHandle nh("~");
+    ros::NodeHandle nh;
     
     ros::Publisher point_pub = 
         nh.advertise<diansai_msgs::WayPoint>("/px4ctrl/custom_waypoint", 10);
@@ -33,6 +33,7 @@ int main(int argc, char  *argv[])
                                          ros::TransportHints().tcpNoDelay());
     
     ros::Rate r(10); // 10Hz
+    ros::Duration(3.0).sleep(); // 等待3秒钟
     point_data.allow_judge_arrival = true; // 允许point_data.current_point获得里程计数据
 
     // 记录零偏
@@ -42,6 +43,11 @@ int main(int argc, char  *argv[])
     point_data.bias_point.z = point_data.current_point.pose.pose.position.z;
     point_data.bias_point.yaw = 0.0;
     ROS_INFO("已记录零偏!");
+    ROS_INFO("零偏: x=%.2f, y=%.2f, z=%.2f, yaw=%.2f",
+             point_data.bias_point.x,
+             point_data.bias_point.y,
+             point_data.bias_point.z,
+             point_data.bias_point.yaw);
  
     // 发布起飞点
     point_data.target_point.x = point_data.target_points[0][0] + point_data.bias_point.x;
@@ -87,7 +93,7 @@ int main(int argc, char  *argv[])
             {
                 point_data.goal_reached_cnt = 0;
                 point_data.allow_judge_arrival = false; // 禁止point_data.current_point获得里程计数据
-                camera_data.is_qrcode_mode = true; // 开启二维码识别模式
+                camera_data.allow_qrcode_input = true; // 开启二维码识别模式
                 ROS_INFO("已到达第%d个目标点!", i);
                 break;
             }
@@ -101,7 +107,7 @@ int main(int argc, char  *argv[])
             if (camera_data.is_qrcode_succeed) 
             {
                 camera_data.is_qrcode_mode = false;
-                camera_data.is_qrcode_succeed = false;
+                camera_data.allow_qrcode_input = false;
                 ROS_INFO("已识别第%d二维码!", i);
                 break;
             }

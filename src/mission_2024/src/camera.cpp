@@ -2,6 +2,8 @@
 
 void Camera_Data_t::save_qrcode(const std::string& result) 
 {
+    if(!allow_qrcode_input) return; // 如果不允许写入二维码，直接返回
+    
     // 检查二维码结果是否已存在
     if (qrcode_results.find(result) == qrcode_results.end()) 
     {
