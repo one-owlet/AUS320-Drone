@@ -8,7 +8,10 @@ void Camera_Data_t::set_flag()
 
 void Camera_Data_t::save_qrcode(const std::string& result) 
 {
-    if (qrcode_results.find(result) == qrcode_results.end()) {  // 如果结果没保存过
+    // 检查二维码结果是否已存在
+    if (qrcode_results.find(result) == qrcode_results.end()) 
+    {
+        ROS_INFO("QR code detected: %s", result.c_str());
         std::string path = ros::package::getPath("mission_2024") + "/qrcode/result.txt";
 
         // 以追加模式打开文件，不存在自动创建
@@ -49,8 +52,6 @@ void Camera_Data_t::feed(sensor_msgs::Image::ConstPtr pmsg)
     zbar::Image zbar_img(gray.cols, gray.rows, "Y800", gray.data, gray.cols * gray.rows);
     scanner.scan(zbar_img);
 
-    if (zbar_img.symbol_begin() == zbar_img.symbol_end()) return;
-
     // 图像中心
     cv::Point2f image_center(cv_ptr->image.cols / 2.0f, cv_ptr->image.rows / 2.0f);
 
@@ -77,7 +78,8 @@ void Camera_Data_t::feed(sensor_msgs::Image::ConstPtr pmsg)
         }
     }
 
-    if (found) {
+    if (found) 
+    {
         std::string result = closest_symbol->get_data();
 
         // 绘制边框
@@ -93,8 +95,11 @@ void Camera_Data_t::feed(sensor_msgs::Image::ConstPtr pmsg)
 
         // 仅保存一次
         Camera_Data_t::save_qrcode(result);
-        ROS_INFO("QR code detected: %s", result.c_str());
     }
+
+    // 显示图像
+    cv::imshow("front_camera", cv_ptr->image);
+    cv::waitKey(1);
 }
 
 

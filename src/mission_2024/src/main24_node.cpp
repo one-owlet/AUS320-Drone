@@ -22,7 +22,7 @@ int main(int argc, char  *argv[])
                                          ros::TransportHints().tcpNoDelay());
     
     ros::Subscriber camera_sub =
-        nh.subscribe<sensor_msgs::Image>("/camera/image_raw",
+        nh.subscribe<sensor_msgs::Image>("/camera/color/image_raw",
                                          1,
                                          boost::bind(&Camera_Data_t::feed, &camera_data, _1),
                                          ros::VoidConstPtr(),
