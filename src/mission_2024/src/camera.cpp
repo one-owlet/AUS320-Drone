@@ -102,7 +102,6 @@ void Camera_Data_t::feed(sensor_msgs::Image::ConstPtr pmsg)
     cv::waitKey(1);
 }
 
-
 void Camera_Data_t::clear_flag()
 {
     is_qrcode_mode = false;
