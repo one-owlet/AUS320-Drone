@@ -62,7 +62,7 @@ int main(int argc, char  *argv[])
     {
         ros::spinOnce();
         if (point_data.check_arrival(point_data.current_point, point_data.target_point)) { point_data.goal_reached_cnt++; }
-        if (point_data.goal_reached_cnt >= 30) 
+        if (point_data.goal_reached_cnt >= 15) 
         {
             point_data.goal_reached_cnt = 0;
             point_data.allow_judge_arrival = false; // 禁止point_data.current_point获得里程计数据
@@ -89,7 +89,7 @@ int main(int argc, char  *argv[])
         {
             ros::spinOnce();
             if (point_data.check_arrival(point_data.current_point, point_data.target_point)) { point_data.goal_reached_cnt++; }
-            if (point_data.goal_reached_cnt >= 30) 
+            if (point_data.goal_reached_cnt >= 15) 
             {
                 point_data.goal_reached_cnt = 0;
                 point_data.allow_judge_arrival = false; // 禁止point_data.current_point获得里程计数据
@@ -132,7 +132,7 @@ int main(int argc, char  *argv[])
     {
         ros::spinOnce();
         if (point_data.check_arrival(point_data.current_point, point_data.target_point)) { point_data.goal_reached_cnt++; }
-        if (point_data.goal_reached_cnt >= 30) 
+        if (point_data.goal_reached_cnt >= 15) 
         {
             point_data.goal_reached_cnt = 0;
             point_data.allow_judge_arrival = false; // 禁止point_data.current_point获得里程计数据
