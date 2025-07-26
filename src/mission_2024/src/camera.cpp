@@ -1,11 +1,5 @@
 #include "camera.h"
 
-void Camera_Data_t::set_flag()
-{
-    is_qrcode_mode = true;
-    is_qrcode_succeed = false;
-}
-
 void Camera_Data_t::save_qrcode(const std::string& result) 
 {
     // 检查二维码结果是否已存在
@@ -34,8 +28,6 @@ void Camera_Data_t::save_qrcode(const std::string& result)
 
 void Camera_Data_t::feed(sensor_msgs::Image::ConstPtr pmsg)
 {
-    if (!is_qrcode_mode) return;
-
     cv_bridge::CvImagePtr cv_ptr;
     try {
         cv_ptr = cv_bridge::toCvCopy(pmsg, "bgr8");
@@ -100,10 +92,4 @@ void Camera_Data_t::feed(sensor_msgs::Image::ConstPtr pmsg)
     // 显示图像
     cv::imshow("front_camera", cv_ptr->image);
     cv::waitKey(1);
-}
-
-void Camera_Data_t::clear_flag()
-{
-    is_qrcode_mode = false;
-    is_qrcode_succeed = false;
 }

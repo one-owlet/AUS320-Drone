@@ -63,14 +63,14 @@ sleep 5s
     exec bash"
 }&
 
-# # Launch RealSenseD435 Camera
-# sleep 5s
-# {
-#     gnome-terminal --title "RealSenseD435" -- bash -c \
-#    "$PUBLIC && \
-#     roslaunch realsense2_camera rs_camera.launch; \
-#     exec bash"
-# }&
+# Launch RealSenseD435 Camera
+sleep 5s
+{
+    gnome-terminal --title "RealSenseD435" -- bash -c \
+   "$PUBLIC && \
+    roslaunch realsense2_camera rs_camera.launch; \
+    exec bash"
+}&
 
 # Lauch mission_2024
 sleep 5s

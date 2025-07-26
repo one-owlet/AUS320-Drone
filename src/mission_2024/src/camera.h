@@ -13,12 +13,9 @@
 class Camera_Data_t
 {
 public:
-    bool is_qrcode_mode{false};
     bool is_qrcode_succeed{false};
     std::set<std::string> qrcode_results;
 
-    void set_flag();
-    void clear_flag();
     void save_qrcode(const std::string& result);
     void feed(sensor_msgs::Image::ConstPtr pmsg);
 };

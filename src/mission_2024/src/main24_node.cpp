@@ -37,6 +37,7 @@ int main(int argc, char  *argv[])
     point_data.bias_point.y = point_data.current_point.pose.pose.position.y;
     point_data.bias_point.z = point_data.current_point.pose.pose.position.z;
     point_data.bias_point.yaw = 0.0;
+    ROS_INFO("已记录零偏!");
  
     // 发布起飞点
     point_data.target_point.x = point_data.target_points[0][0] + point_data.bias_point.x;
@@ -44,6 +45,7 @@ int main(int argc, char  *argv[])
     point_data.target_point.z = point_data.target_points[0][2] + point_data.bias_point.z;
     point_data.target_point.yaw = point_data.target_points[0][3] + point_data.bias_point.yaw;
     point_pub.publish(point_data.target_point);
+    ROS_INFO("已发布起飞点!");
     
     // 检查是否到达
     while(ros::ok())
@@ -54,6 +56,7 @@ int main(int argc, char  *argv[])
         {
             point_data.goal_reached_cnt = 0;
             point_data.allow_judge_arrival = false; // 禁止point_data.current_point获得里程计数据
+            ROS_INFO("已到达起飞点!");
             break;
         }
         r.sleep();
@@ -80,25 +83,26 @@ int main(int argc, char  *argv[])
             {
                 point_data.goal_reached_cnt = 0;
                 point_data.allow_judge_arrival = false; // 禁止point_data.current_point获得里程计数据
+                ROS_INFO("已到达第%d个目标点!", i);
                 break;
             }
             r.sleep();
         }
 
-        // 调用摄像头，识别二维码
-        camera_data.set_flag();
+        // 二维码识别
         while(ros::ok())
         {
             ros::spinOnce();
             if (camera_data.is_qrcode_succeed) 
             {
-                camera_data.clear_flag();
+                camera_data.is_qrcode_succeed = false;
+                ROS_INFO("已识别第%d二维码!", i);
                 break;
             }
             r.sleep();
         }
         
-        // 调用激光笔
+        // 激光笔指示
 
     }
 
