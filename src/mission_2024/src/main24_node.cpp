@@ -106,7 +106,7 @@ int main(int argc, char  *argv[])
             ros::spinOnce();
             if (camera_data.is_qrcode_succeed) 
             {
-                camera_data.is_qrcode_mode = false;
+                camera_data.is_qrcode_succeed = false;
                 camera_data.allow_qrcode_input = false;
                 ROS_INFO("已识别第%d二维码!", i);
                 break;
